@@ -3,6 +3,10 @@
 |:--:| 
 
 # Hands On Guide
+This guide walksthrough how to use Fivetran, Redshift and Redshift ML to automate both the Data Ingestion and Machine Learning portions of an example data pipeline. Through the Fivetran AWS Dev Day, this guide shows how to get access to Event Engine, provision and set up Redshift, and create a Fivetran trial account through Redshift's partner integration.
+
+| ![diagram.png](images/diagram.png) | 
+|:--:| 
 
 ## Table of Contents
 1. [Event Engine](#event)
@@ -11,6 +15,12 @@
 4. [Redshift ML](#ml)
 
 ### Event Engine  <a name="event"></a>
+The AWS Event Engine was created to help AWS field teams run Workshops, GameDays, Bootcamps, Immersion Days, and other events such as this Dev Day that require hands-on access to AWS accounts. This section instructs how to get access to Event Engine to create free, temporary AWS services. Start with the link provided during the hands on portion of Dev Day, *Accept Terms & Login*, then receive a One-Time Password via email to get access to Event Engine.
+
+
+| ![event0.png](images/event0.png) | 
+|:--:| 
+
 
 | ![event1.jpg](images/event1.jpg) | 
 |:--:| 
@@ -37,7 +47,7 @@
 
 
 
-| ![event1.jpg](images/event6.jpg) | 
+| ![event6.jpg](images/event6.jpg) | 
 |:--:| 
 | *Select Redshift in Recently visited services, or via search* |
 
