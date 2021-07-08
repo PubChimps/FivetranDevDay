@@ -24,7 +24,7 @@ The AWS Event Engine was created to help AWS field teams run Workshops, GameDays
 
 | ![event1.jpg](images/event1.jpg) | 
 |:--:| 
-| *A OTP via email is the preferred method for this Dev Day* |
+| *OTP via email is the preferred method for this Dev Day* |
 
 
 | ![event2.jpg](images/event2.jpg) | 
@@ -60,7 +60,7 @@ This section is all about Redshift, and getting it ready for both Fivetran and R
 
 | ![rs2.png](images/rs2.png) | 
 |:--:| 
-| Keep all options as their defaults, except *Admin user password* which is *Fivetran1* |
+| Keep all options as their defaults, except **Admin user password** which is *Fivetran1* |
 
 | ![rs18.jpg](images/rs18.jpg) | 
 |:--:| 
@@ -106,7 +106,7 @@ Once a Redshift Cluster and S3 bucket have been created, a specific IAM Role has
 
 | ![rs10.jpg](images/rs10.jpg) | 
 |:--:| 
-| *redshiftml* is the Role name, and a description is needed before selecting *Create role* |
+| *redshiftml* is the **Role name**, and a description is needed before selecting *Create role* |
 
 | ![rs11.jpg](images/rs11.jpg) | 
 |:--:| 
@@ -179,65 +179,69 @@ Fivetran pulls data from sources and sends it to Redshift using a set of fixed I
 
 # Fivetran <a name="fivetran"></a>
 
+
 | ![ft1.jpg](images/ft1.jpg) | 
 |:--:| 
-| *1* |
+| Fivetran automates data ingestion from over 150 sources to destinations like Redshift |
 
 | ![ft2.jpg](images/ft2.jpg) | 
 |:--:| 
-| *2* |
+| Keep all them information as their default values and select *Add partner* |
 
 | ![ft3.jpg](images/ft3.jpg) | 
 |:--:| 
-| *3* |
+| To start a Fivetran trial, the **E-mail** and **Company** entered cannot have been used for a trial previously. To achieve this, I created an email for this Dev Day and used it as the Company. Select *Sign up* |
 
 | ![ft4.jpg](images/ft4.jpg) | 
 |:--:| 
-| *4* |
+| Select *Verify your Account* in an email from sales@fivetran.com |
 
 | ![ft5.jpg](images/ft5.jpg) | 
 |:--:| 
-| *5* |
+| Create a password and *Continue* |
 
 | ![ft6.jpg](images/ft6.jpg) | 
 |:--:| 
-| *6* |
+| A Fivetran trial account has been created! Just one connector will be used in this example, select *Set up a connector* |
 
 | ![ft7.jpg](images/ft7.jpg) | 
 |:--:| 
-| *7* |
+| Fivetran will move data from Google Sheets to Redshift, select *Google Sheets* and *CONTINUE SETUP*|
 
 | ![ft8.jpg](images/ft8.jpg) | 
 |:--:| 
-| *8* |
+| With the **Destination schema** as *google_sheets* and **Destination table** as *devday* Fivetran knows where in Redshift to store data, then select *Grant User Access* and *AUTHORIZE* to select a Google account the Fivetran can use to access the Google sheet. Any Google account will be able to. |
 
 | ![ft9.jpg](images/ft9.jpg) | 
 |:--:| 
-| *9* |
+| The **Sheet URL** is listed below, after copying it, select *alldata* for the **Named Range** and *SAVE & TEST*|
+
+Google Sheet URL 
+`https://docs.google.com/spreadsheets/d/1HbFO7anjm_luv_2xugZIvCtObWKfwChVSP12a2gFxLk/edit`
 
 | ![ft10.jpg](images/ft10.jpg) | 
 |:--:| 
-| *10* |
+| After all Connections tests have passed, select *CONTINUE* |
 
 | ![ft11.jpg](images/ft11.jpg) | 
 |:--:| 
-| *11* |
+| Now Redshift will be set up as a Fivetran Destination, select *Redshift* and *CONTINUE SETUP* |
 
 | ![ft12.jpg](images/ft12.jpg) | 
 |:--:| 
-| *12* |
+| Back in the AWS Console, copy the Redshift Cluster endpoint |
 
 | ![ft13.jpg](images/ft13.jpg) | 
 |:--:| 
-| *13* |
+| Paste the copied Endpoint as a **Host**, but delete :5394/dev portion from the end, those belong in **Port** and **Database**. With the **Password** as *Fivetran1* and *Connect directly* **Connection Method**, select *SAVE & TEST*|
 
 | ![ft14.jpg](images/ft14.jpg) | 
 |:--:| 
-| *14* |
+| After all Connections tests have passed, select *CONTINUE* |
 
 | ![ft15.jpg](images/ft15.jpg) | 
 |:--:| 
-| *15* |
+| Finish Fivetran setup by selecting *Start Inital Sync* |
 
 # Redshift ML <a name="ml"></a>
 
