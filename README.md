@@ -14,7 +14,7 @@ This guide walksthrough how to use Fivetran, Redshift and Redshift ML to automat
 3. [Fivetran](#fivetran)
 4. [Redshift ML](#ml)
 
-### Event Engine  <a name="event"></a>
+# Event Engine  <a name="event"></a>
 The AWS Event Engine was created to help AWS field teams run Workshops, GameDays, Bootcamps, Immersion Days, and other events such as this Dev Day that require hands-on access to AWS accounts. This section instructs how to get access to Event Engine to create free, temporary AWS services. Start with the link provided during the hands on portion of Dev Day, *Accept Terms & Login*, then receive a One-Time Password via email to get access to Event Engine.
 
 
@@ -51,106 +51,133 @@ The AWS Event Engine was created to help AWS field teams run Workshops, GameDays
 |:--:| 
 | *Select Redshift in Recently visited services, or via search* |
 
-### Redshift  <a name="redshift"></a>
-
+# Redshift  <a name="redshift"></a>
+This section is all about Redshift, and getting it ready for both Fivetran and Redshift ML. The pictures walkthrough how to create a cluster, configure IAM roles and S3 buckets so that Redshift ML can be used, and whitelist Fivetran IP addresses so that it can bring data into Redshift. This starts with creating a cluster
 
 | ![rs1.jpg](images/rs1.jpg) | 
 |:--:| 
-| *1* |
+| Select *Create cluster* |
 
-| ![rs2.jpg](images/rs2.jpg) | 
+| ![rs2.png](images/rs2.png) | 
 |:--:| 
-| *2* |
-
-| ![rs3.jpg](images/rs3.jpg) | 
-|:--:| 
-| *3* |
-
-| ![rs4.jpg](images/rs4.jpg) | 
-|:--:| 
-| *4* |
-
-| ![rs5.png](images/rs5.png) | 
-|:--:| 
-| *5* |
-
-| ![rs6.jpg](images/rs6.jpg) | 
-|:--:| 
-| *6* |
-
-| ![rs7.jpg](images/rs7.jpg) | 
-|:--:| 
-| *7* |
-
-| ![rs8.jpg](images/rs8.jpg) | 
-|:--:| 
-| *8* |
-
-| ![rs9.jpg](images/rs9.jpg) | 
-|:--:| 
-| *9* |
-
-| ![rs10.jpg](images/rs10.jpg) | 
-|:--:| 
-| *10* |
-
-| ![rs11.jpg](images/rs11.jpg) | 
-|:--:| 
-| *11* |
-
-| ![rs12.jpg](images/rs12.jpg) | 
-|:--:| 
-| *12* |
-
-| ![rs13.jpg](images/rs13.jpg) | 
-|:--:| 
-| *13* |
-
-| ![rs14.jpg](images/rs14.jpg) | 
-|:--:| 
-| *14* |
-
-| ![rs15.jpg](images/rs15.jpg) | 
-|:--:| 
-| *15* |
-
-| ![rs16.jpg](images/rs16.jpg) | 
-|:--:| 
-| *16* |
-
-| ![rs17.jpg](images/rs17.jpg) | 
-|:--:| 
-| *17* |
+| Keep all options as their defaults, except *Admin user password* which is *Fivetran1* |
 
 | ![rs18.jpg](images/rs18.jpg) | 
 |:--:| 
-| *18* |
+| Find *S3* under *Services*, S3 is needed so that Redshift can store and reference Sagemaker assests. |
 
 | ![rs19.jpg](images/rs19.jpg) | 
 |:--:| 
-| *19* |
+| Select *Create bucket* |
 
 | ![rs20.jpg](images/rs20.jpg) | 
 |:--:| 
-| *20* |
+| When creating a bucket, its name must be globally unique, I achieved this by naming it redshiftml-*the email I used for this walkthrough*, then select *Create bucket* |
+
+Once a Redshift Cluster and S3 bucket have been created, a specific IAM Role has to be create for Redshift to use AWS Sagemaker for ML purposes.
+
+| ![rs3.jpg](images/rs3.jpg) | 
+|:--:| 
+| *IAM* can be found be searching the Serivces dropdown|
+
+| ![rs4.jpg](images/rs4.jpg) | 
+|:--:| 
+| In *Roles* select *Create role*|
+
+| ![rs5.png](images/rs5.png) | 
+|:--:| 
+| This will be a *Redshift - Customizable* role |
+
+| ![rs6.jpg](images/rs6.jpg) | 
+|:--:| 
+| 2 policies will be needed for the role, add them by selecting *Create policy* |
+
+| ![rs7.jpg](images/rs7.jpg) | 
+|:--:| 
+| Search for and add *AmazonS3FullAccess* |
+
+| ![rs8.jpg](images/rs8.jpg) | 
+|:--:| 
+| Search for and add *AmazonSageMakerFullAccess* |
+
+| ![rs9.jpg](images/rs9.jpg) | 
+|:--:| 
+| *No tags are needed* |
+
+| ![rs10.jpg](images/rs10.jpg) | 
+|:--:| 
+| *redshiftml* is the Role name, and a description is needed before selecting *Create role* |
+
+| ![rs11.jpg](images/rs11.jpg) | 
+|:--:| 
+| Once the role is created, its trust relationship must be edited, select *Edit trust relationship* (Note this is also where you can find the Role APN, which is needed later) |
+
+| ![rs12.jpg](images/rs12.jpg) | 
+|:--:| 
+| After pasting the json below, select *Update Trust Policy* |
+
+This trust policy allows Sagemaker to work on Redshift's behalf to automate the process of creating and training machine learning models automatically
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": [
+          "redshift.amazonaws.com",
+          "sagemaker.amazonaws.com"
+        ]
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+| ![rs13.jpg](images/rs13.jpg) | 
+|:--:| 
+| Back in Redshift, the newly created role will need to be applied to the cluster |
+
+| ![rs14.jpg](images/rs14.jpg) | 
+|:--:| 
+| Select *Actions*, then *Manage IAM roles* |
+
+| ![rs15.jpg](images/rs15.jpg) | 
+|:--:| 
+| Find the *redshiftml* role that was just created, then select *Associate IAM role* and *Save changes*|
+
+| ![rs16.jpg](images/rs16.jpg) | 
+|:--:| 
+| Select *Actions* again, and *Modify publicly accessible setting* so that Fivetran can work with Redshift|
+
+| ![rs17.jpg](images/rs17.jpg) | 
+|:--:| 
+| After ticking *Enable*, select *Save changes*|
+
+Fivetran pulls data from sources and sends it to Redshift using a set of fixed IP addresses. To ensure that Fivetran can do this, some IP addresses must be whitelisted.
 
 | ![rs21.jpg](images/rs21.jpg) | 
 |:--:| 
-| *21* |
+| In the Redshift cluster's *Properties*, select the name of the *VPC security group* |
 
 | ![rs22.jpg](images/rs22.jpg) | 
 |:--:| 
-| *22* |
+| In the secruity group's *Inbound rules*, select *Edit Inbound rules* |
 
 | ![rs23.jpg](images/rs23.jpg) | 
 |:--:| 
-| *23* |
+| The two IP ranges below should be added as *Custom TCP* for *Port Range* 5439, the *Save Rules* |
+
+`35.234.176.144/29`
+`52.0.2.4/32`
 
 | ![rs24.jpg](images/rs24.jpg) | 
 |:--:| 
-| *24* |
+| Fivetran will be added to Redshift with *Add partner integration* |
 
-### Fivetran <a name="fivetran"></a>
+# Fivetran <a name="fivetran"></a>
 
 | ![ft1.jpg](images/ft1.jpg) | 
 |:--:| 
@@ -212,7 +239,7 @@ The AWS Event Engine was created to help AWS field teams run Workshops, GameDays
 |:--:| 
 | *15* |
 
-### Redshift ML <a name="ml"></a>
+# Redshift ML <a name="ml"></a>
 
 | ![ml1.jpg](images/ml1.jpg) | 
 |:--:| 
