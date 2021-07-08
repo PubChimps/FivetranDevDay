@@ -178,7 +178,7 @@ Fivetran pulls data from sources and sends it to Redshift using a set of fixed I
 | Fivetran will be added to Redshift with *Add partner integration* |
 
 # Fivetran <a name="fivetran"></a>
-
+Here Fivetran is set up to automate the process of sending data to Redshift
 
 | ![ft1.jpg](images/ft1.jpg) | 
 |:--:| 
@@ -244,28 +244,52 @@ Google Sheet URL
 | Finish Fivetran setup by selecting *Start Inital Sync* |
 
 # Redshift ML <a name="ml"></a>
+This section demonstrates Redshift ML, and how it can be used to create and use machine learning models automatically and in SQL.
 
 | ![ml1.jpg](images/ml1.jpg) | 
 |:--:| 
-| *1* |
+| In the Redshift Query Editor select *Connect to database* |
 
 | ![ml2.jpg](images/ml2.jpg) | 
 |:--:| 
-| *2* |
+| *Connect* to *dev* as *awsuser* |
 
 | ![ml3.jpg](images/ml3.jpg) | 
 |:--:| 
-| *3* |
+| Using the IAM Role and S3 Bucket creating while setting up Redshift, run the query below |
 
+```
+CREATE MODEL redshiftml_model FROM (SELECT input_1,
+        input_2,
+        input_3,
+        input_4,
+        label
+    FROM google_sheets.devday
+    )
+TARGET label FUNCTION ml_fn_redshiftml_auto
+IAM_ROLE XXXXXX_YOUR_IAM_ROLE_XXXXXXX SETTINGS (
+  S3_BUCKET XXXXXX_YOUR_S3_BUCKET_XXXXXXX
+);
+```
 | ![ml4.jpg](images/ml4.jpg) | 
 |:--:| 
-| *4* |
+| Redshift ML will begin to generate, train, and evaluate the best model for the data, it's status can be checked with the query below |
 
-| ![ml5.jpg](images/ml5.jpg) | 
+`select schema_name, model_name, model_state from stv_ml_model_info;`
+
+| ![ml5.png](images/ml5.png) | 
 |:--:| 
-| *5* |
+| When finished **model_state** will be *Model is Ready*. This will likely take longer than the time premitted for the Dev Day, up to an hour. |
 
 | ![ml6.jpg](images/ml6.jpg) | 
 |:--:| 
-| *6* |
+| Once the model is ready, use the query below to make a prediction with it, and follow its instuctions for the chance to win a prize! |
 
+```
+SELECT ml_fn_redshiftml_auto(
+    input_1,
+    input_2,
+    input_3,
+    input_4)
+    AS active FROM google_sheets.devday limit 1;
+```
