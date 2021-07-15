@@ -291,5 +291,5 @@ SELECT ml_fn_redshiftml_auto(
     input_2,
     input_3,
     input_4)
-    AS active FROM google_sheets.devday limit 1 offset 4;
+    AS active FROM google_sheets.devday limit 1 offset 400;
 ```
